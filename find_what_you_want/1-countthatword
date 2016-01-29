@@ -1,2 +1,2 @@
 #!/bin/bash
-grep -o -c 'bin' /etc/passwd
+grep -c 'bin' /etc/passwd
