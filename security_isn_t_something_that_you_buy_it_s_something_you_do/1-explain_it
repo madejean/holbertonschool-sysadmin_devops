@@ -1,3 +1,3 @@
-1. Create an SSH keu using ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+1. Create an SSH key using ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 2. The public key can be shared and will be used to make the connection to a server. Can be seen as a lock.
 3. the private key should remain secret and is advisable to store it on disk in an encrypted form. It will be used to connect to the server. Can be seen as the actual key.
