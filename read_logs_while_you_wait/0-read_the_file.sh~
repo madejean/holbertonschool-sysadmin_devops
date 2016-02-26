@@ -1,0 +1,7 @@
+#!/bin/bash
+if test -r $1
+   then
+while IFS='' read -r line;
+do
+    echo $line
+done < "$1"
