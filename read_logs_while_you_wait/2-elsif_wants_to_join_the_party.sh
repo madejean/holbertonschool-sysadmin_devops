@@ -1,9 +1,7 @@
 #!/bin/bash
-if test $1
-   then
-while read -r line;
+while IFS='' read -r line;
+if 
 do
-    curl -o /dev/null --silent --head --write-out '%{http_code}' "$LINE"
     echo $line
 done < "$1"
 fi
