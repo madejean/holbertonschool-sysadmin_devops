@@ -1,11 +1,13 @@
 #!/bin/bash
-while read -r line; do
-    if $line=="HEAD"
+while read line
+do
+    if [[ $line == *HEAD* ]]
     then
-	echo count"HEAD"
-    elif $line== "GET"
+	 HEAD=$(($HEAD+1))
+    elif [[ $line == *GET* ]]
     then
-	echo count"GET"
-fi
-done < "$1"
-
+	 GET=$(($GET+1))
+    fi
+done < $1
+echo $HEAD
+echo $GET
