@@ -6,7 +6,7 @@ do
 	HEAD=$(($HEAD+1))
     elif [ $(echo $line | grep -o GET) ]
     then
-	GET=$(($GET+1))
+	GET=$(($GET+1)
     fi
 done < $1
 echo $HEAD
