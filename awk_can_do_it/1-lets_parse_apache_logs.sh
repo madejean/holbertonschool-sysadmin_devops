@@ -1,5 +1,2 @@
 #!/bin/bash
-while read -r line;
-      do
-echo $1 | awk -F '{print $1}'   
-done < "$1"
+awk '{print $1, $9}' $1
