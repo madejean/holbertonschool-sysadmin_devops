@@ -1,0 +1,2 @@
+#!/bin/bash
+grep -oP '"base64">\K[[:graph:]]+' quote_encoded | base64 -d
