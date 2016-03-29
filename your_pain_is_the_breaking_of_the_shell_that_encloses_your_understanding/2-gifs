@@ -1,2 +1,2 @@
 #!/bin/bash
-find -name "*.gif" -exec basename {} \;| cut -f1 -d'.'
+find -name "*.gif" -type f -exec basename \{} .gif \;
