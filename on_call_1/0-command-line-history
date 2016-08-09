@@ -3,8 +3,12 @@ sudo iptables -F
 sudo emacs /etc/nginx/sites-enabled/default
 sudo service nginx restart
 sudo service apache2 stop
+kill -9 $(ps -e | grep apache2 | awk '{print $1}')
+sudo service apache2 stop
 mount -o remount,rw /var/lib/newmysql
 sudo chown mysql:root mysql
 sudo service mysql start
+sudo service nginx restart
 cat /var/log/syslog
 /var/spool/cron/crontabs/root
+sudo service nginx restart
