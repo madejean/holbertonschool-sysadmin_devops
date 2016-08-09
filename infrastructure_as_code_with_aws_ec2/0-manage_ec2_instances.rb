@@ -1,50 +1,84 @@
 #!/usr/bin/ruby
-
-require 'rubygems'
 require 'aws-sdk'
+require 'optparse'
+require 'yaml'
 
-Aws.config(:credentials => ENV['AWS_ACCES_KEY_ID'],
-           :credentials => ENV['AWS_SECRET_KEY'])
+options = {}
 
-ec2 = Aws::EC2.new.regions['us-west-2b']
-ami_name = 'amzn-ami-hvm-2016.03.3.x86_64-gp2 (ami-7172b611)'
-key_pair_name = qwikLABS-L265-609409
-private_key_file = "#{ENV['HOME']}/.ssh/AmazonSecretAccessKey.pem"
-security_group_name = 'launch-wizard-1'
-instance_type = 't2.micro'
-ssh_username = amzn-ami
+OptionParser.new do |opts|
+    opts.banner = "Enter option:"
+    opts.on("-a","--action [ACTION]", [:launch, :stop, :start, :terminate], "Please select action:") do |a|
+        options[:action] = a
+    end
 
+    opts.on("-i", "--server_id [SERVER_ID]", "server id") do |s|
+        options[:server_id] = s
+    end
 
-image = Aws.memoize do
-  ec2.images.filter("root-device-type", "ebs").filter('name', ami_name).first
+    opts.on('-v', '--verbose', 'extra information') do |v|
+        options[:verbose] = v
+    end
+
+    opts.on('-h', '--help', 'help') do
+        puts opts
+        exit
+    end
+
+end.parse!
+
+if options[:action].nil? then
+    raise OptionParser::MissingArgument, "Provide necessary arguments, use -h or --help"
 end
 
-if image
-  puts "Using AMI: #{image.id}"
-else
-  raise "No image found matching #{ami_name}"
+config = YAML.load_file('config.yaml')
+
+client = Aws::EC2::Client.new({
+        region: 'us-west-2',
+        access_key_id: config['access_key_id'],
+        secret_access_key: config['secret_access_key']
+    })
+
+if options[:action] == :launch then
+    ec2 = Aws::EC2::Resource.new(client: client)
+    instance = ec2.create_instances({
+          image_id: config["image_id"],
+          min_count: 1,
+          max_count: 1,
+          key_name: config['key_pair'],
+          security_group_ids: config["security_group_ids"],
+          instance_type: config['instance_type'],
+          placement: {
+            availability_zone: config['us-west-2a']
+          }
+    })
+
+    ec2.client.wait_until(:instance_status_ok, {instance_ids: [instance[0].id]})
+    inst = instance[0]
+    inst.load()
+    puts inst.id, inst.public_dns_name
+
+elsif options[:action] == :stop then
+    raise OptionParser::MissingArgument, "Error: SERVER_ID" if options[:server_id].nil?
+    client.stop_instances({
+          dry_run: false,
+          instance_ids: [options[:server_id]],
+          force: false,
+        })
+
+elsif options[:action] == :start then
+    raise OptionParser::MissingArgument, "Error: SERVER_ID" if options[:server_id].nil?
+    out = client.start_instances({
+          instance_ids: [options[:server_id]],
+          dry_run: false,
+        })
+    out = client.wait_until(:instance_running, instance_ids:[options[:server_id]])
+    dns_name = out.reservations[0].instances[0].public_dns_name
+    puts dns_name
+
+elsif options[:action] == :terminate then
+    raise OptionParser::MissingArgument, "Error: SERVER_ID" if options[:server_id].nil?
+    client.terminate_instances({
+          dry_run: false,
+          instance_ids: [options[:server_id]],
+    })
 end
-
-key_pair = ec2.key_pairs[key_pair_name]
-puts "Using keypair #{key_pair.name}, fingerprint: #{key_pair.fingerprint}"
-
-security_group = ec2.security_groups.find{|sg| sg.name == security_group_name}
-puts "Using security group: #{security_group.name}"
-
-instance = ec2.instances.create(:image_id => image.id,
-                                :instance_type => instance_type,
-                                :count => 1,
-                                :security_groups => security_group,
-                                :key_pair => key_pair)
-puts "Launching machine ..."
-
-sleep 1 until instance.status != :pending
-puts "Launched instance #{instance.id}, status: #{instance.status}, public dns: #{instance.dns_name}, public ip: #{instance.ip_addess}"
-exit 1 unless instance.status == :running
-
-puts "Launched: You can SSH to it with;"
-puts "ssh -i #{private_key_file} #{ssh_username}@#{instance.ip_address}"
-
-
-  
-  
