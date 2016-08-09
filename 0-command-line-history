@@ -1,0 +1,10 @@
+sudo iptables -L 
+sudo iptables -F
+sudo emacs /etc/nginx/sites-enabled/default
+sudo service nginx restart
+sudo service apache2 stop
+mount -o remount,rw /var/lib/newmysql
+sudo chown mysql:root mysql
+sudo service mysql start
+cat /var/log/syslog
+/var/spool/cron/crontabs/root

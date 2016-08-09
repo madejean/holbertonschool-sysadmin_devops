@@ -1,0 +1,7 @@
+access_key_id: AKIAJJSUI5ENBCQ4NIAA
+secret_access_key: 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
+key_pair: qwikLABS-L265-609409
+image_id: ami-76f97446
+instance_type: t1.micro
+availability-zone: us-west-2b
+security_group_ids: [sg-05f2a363]
