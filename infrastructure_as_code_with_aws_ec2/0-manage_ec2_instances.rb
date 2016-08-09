@@ -11,15 +11,15 @@ OptionParser.new do |opts|
         options[:action] = a
     end
 
-    opts.on("-i", "--server_id [SERVER_ID]", "server id") do |s|
+    opts.on("-i", "--instance_id [SERVER_ID]", "server id:") do |s|
         options[:server_id] = s
     end
 
-    opts.on('-v', '--verbose', 'extra information') do |v|
+    opts.on('-v', '--verbose', 'extra information:') do |v|
         options[:verbose] = v
     end
 
-    opts.on('-h', '--help', 'help') do
+    opts.on('-h', '--help', 'help:') do
         puts opts
         exit
     end
@@ -27,7 +27,7 @@ OptionParser.new do |opts|
 end.parse!
 
 if options[:action].nil? then
-    raise OptionParser::MissingArgument, "Provide necessary arguments, use -h or --help"
+    raise OptionParser::MissingArgument, "Provide options use -h or --help"
 end
 
 config = YAML.load_file('config.yaml')
