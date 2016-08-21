@@ -6,7 +6,7 @@ require 'yaml'
 options = {}
 
 OptionParser.new do |opts|
-    opts.banner = "Enter option:"
+    opts.banner = "Usage: 0-basic_aws_s3_script.rb [options]"
     opts.on("-a", "--action [action]", [:list, :upload, :delete, :download], "Please select action") do |a|
       options[:action] = a
     end
@@ -19,7 +19,7 @@ OptionParser.new do |opts|
 end.parse!
 
 if options[:action].nil? then
-  raise OptionParser::MissingArgument, "Missing option"
+  #raise OptionParser::MissingArgument, "Missing option"
 end
 
 config = YAML::load_file("config.yaml")
@@ -28,7 +28,7 @@ client = Aws::S3::Client.new({
     secret_access_key: config['secret_access_key'],
     region: 'us-west-2',
     })
-bucket = s3_resource.bucket(options.bucketname)
+bucket = s3.bucket(options.bucketname)
 
   if options[:action] == :list then
     s3 = Aws::S3::Resource.new(client: client)
