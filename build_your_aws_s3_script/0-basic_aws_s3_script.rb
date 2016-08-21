@@ -11,10 +11,22 @@ OptionParser.new do |opts|
       options[:action] = a
     end
 
-    opts.on("-h", "--help") do
-      puts opts
-      exit
-    end
+    opts.on("-v", "--verbose", "Run verbosely") do |v|
+        options[:verbose] = v
+      end
+
+      opts.on("-b", "--bucketname=BUCKET_NAME", "Name of the bucket to perform the action on") do |b|
+        options[:bucket_name] = b
+      end
+
+      opts.on("-f", "--filepath=FILE_PATH", "Path to the file to upload") do |f|
+        options[:file_path] = f
+      end
+
+      opts.on("-h", "--help") do
+          puts opts
+          exit
+      end
 
 end.parse!
 
